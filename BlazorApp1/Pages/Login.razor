@@ -1,0 +1,43 @@
+﻿<h3>Login</h3>
+
+<EditForm Model="_model">
+    <!-- BEGIN create component for fields below, labels should be parameters and set by (this) parent component -->
+    <div class="form-group">
+        <label>Username</label>
+        <InputText @bind-Value="_model.Username" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <InputText @bind-Value="_model.Password" class="form-control"></InputText>
+    </div>
+    <!-- END -->
+    <div class="mt-2">
+        <button type="button" @onclick="Authenticate" class="btn btn-primary">Authenticate</button>
+    </div>
+    <hr />
+    <!-- should only display success if _success != null -->
+    <div>success: @_success</div>
+</EditForm>
+
+@code {
+    private LoginModel _model = new();
+
+    private bool? _success;
+
+    public async Task Authenticate()
+    {
+        ILoginService loginService = new LoginService();
+
+        _success = null;
+
+        var request = new LoginAuthenticateRequestArgs
+            {
+                Username = _model.Username,
+                Password = _model.Password,
+            };
+
+        var result = await loginService.AuthenticateAsync(request);
+
+        _success = result.Success;
+    }
+}
